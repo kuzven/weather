@@ -29,7 +29,7 @@ def autocomplete_city(request):
 
         # Формируем список городов для ответа
         cities = [{"name": city["name"], "latitude": city["latitude"], "longitude": city["longitude"]}
-                  for city in response.get("results", [])]
+            for city in response.get("results", [])]
 
         return JsonResponse({"cities": cities})
 

@@ -2,16 +2,17 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h1 class="text-center">Прогноз погоды</h1>
+    <h1 class="text-center">Прогноз погоды по названию города</h1>
 
     <!-- Форма ввода города -->
-    <div class="mb-3">
-        <input type="text" id="city-input" class="form-control" placeholder="Введите город...">
+    <div class="mt-5 mb-3">
+        <p class="text-center">Введите название города для получения прогноза погоды на 3 дня</p>
+        <input type="text" id="city-input" class="form-control" placeholder="Введите название города..." style="width: 50%;">
         <ul id="suggestions" class="list-group mt-2"></ul>
     </div>
 
     <!-- Таблица для отображения погоды -->
-    <table class="table table-bordered text-center mt-3">
+    <table id="weather-table" class="table table-bordered text-center mt-3">
         <thead>
             <tr>
                 <th>Дата</th>

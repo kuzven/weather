@@ -65,6 +65,8 @@ $(document).ready(function () {
                         </tr>
                     `);
                 });
+
+                $("#weather-table").show();  // Показываем таблицу, если данные получены
             }
         });
     }

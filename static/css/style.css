@@ -1,0 +1,82 @@
+/* Обнуление стилей */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #f8f8f8;
+    background-color: #121212;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+main {
+    background-color: #303030;
+    flex-grow: 1; /* Растягиваем main на всё оставшееся пространство */
+}
+
+.navbar-brand {
+    color: #f8f8f8 !important;
+}
+
+h1 { font-size: 1.25em; }
+
+#city-input {
+    width: 50%; /* Уменьшение ширины */
+    margin: 0 auto; /* Центрирование */
+    display: block; /* Обеспечивает центрирование */
+    border: 2px solid #ffcc66 !important; /* Жёлтая граница */
+    outline: none !important; /* Убираем синий контур */
+}
+
+#city-input:hover, #city-input:focus {
+    background-color: #fffacd !important; /* Бледно-жёлтый фон */
+    border: 2px solid #ffcc66; /* Подсвеченная граница */
+    box-shadow: 0 0 8px rgba(255, 204, 102, 0.8) !important; /* Мягкая жёлтая подсветка */
+    transition: background-color 0.3s ease-in-out; /* Плавность */
+}
+
+/* Адаптивность для мобильных устройств (экран 767px и меньше) */
+@media (max-width: 767px) {
+    #city-input {
+        width: 80% !important; /* Увеличиваем ширину для маленьких экранов */
+    }
+}
+
+#suggestions {
+    width: 50%; /* Совпадает с шириной #city-input */
+    position: absolute; /* Размещаем над другими элементами */
+    left: 50%; /* Центрируем относительно страницы */
+    transform: translateX(-50%); /* Смещаем влево на половину ширины */
+    margin-top: 5px; /* Добавляем небольшой отступ */
+    z-index: 1000; /* Гарантируем, что список будет над формой */
+}
+
+/* Адаптивность для мобильных устройств (экран 767px и меньше) */
+@media (max-width: 767px) {
+    #suggestions {
+        width: 80% !important; /* Как и #city-input */
+    }
+}
+
+#weather-table {
+    display: none;
+}
+
+.city-option {
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.city-option:hover {
+    background-color: #fffacd; /* Бледно-жёлтый фон */
+    color: #000; /* Цвет текста */
+    cursor: pointer; /* Делаем курсор как у ссылок */
+    transition: background-color 0.3s ease-in-out;
+}
