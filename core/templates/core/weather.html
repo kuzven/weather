@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center">Прогноз погоды</h1>
+
+    <!-- Форма ввода города -->
+    <div class="mb-3">
+        <input type="text" id="city-input" class="form-control" placeholder="Введите город...">
+        <ul id="suggestions" class="list-group mt-2"></ul>
+    </div>
+
+    <!-- Таблица для отображения погоды -->
+    <table class="table table-bordered text-center mt-3">
+        <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Мин. температура (°C)</th>
+                <th>Макс. температура (°C)</th>
+                <th>Ветер (м/с)</th>
+                <th>Осадки (мм)</th>
+                <th>Облачность (%)</th>
+            </tr>
+        </thead>
+        <tbody id="weather-table-body">
+        </tbody>
+    </table>
+</div>
+{% endblock %}

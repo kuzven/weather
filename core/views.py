@@ -4,6 +4,13 @@ from django.http import JsonResponse
 from .models import CitySearchHistory
 
 
+def index(request):
+    """
+    Главная страница сайта. Отображает форму для ввода города и прогноз погоды.
+    """
+    return render(request, "core/weather.html")
+
+
 def autocomplete_city(request):
     """
     Обработчик автодополнения названий городов.
@@ -32,35 +39,45 @@ def autocomplete_city(request):
 def get_weather(request):
     """
     Получение прогноза погоды на 3 дня через Open-Meteo API.
-    Запрашивает данные по координатам города.
+    Запрашивает сначала координаты города через Geocoding API, а затем прогноз погоды.
 
     Аргументы:
-    - request: HTTP-запрос с параметрами GET "lat" (широта) и "lon" (долгота).
+    - request: HTTP-запрос с параметром GET "city" (название города).
 
     Возвращает:
     - JSON-ответ с прогнозом температуры, ветра, осадков и облачности на 3 дня.
     """
-    latitude = request.GET.get("lat")
-    longitude = request.GET.get("lon")
+    city_name = request.GET.get("city", "").strip()
 
-    if latitude and longitude:
-        url = f"https://api.open-meteo.com/v1/forecast?latitude={latitude}&longitude={longitude}&daily=temperature_2m_max,temperature_2m_min,wind_speed_10m_max,precipitation_sum,cloudcover_mean&timezone=Europe/Moscow&language=ru"
-        response = requests.get(url).json()
+    if not city_name:
+        return JsonResponse({"error": "Название города не указано"})
 
-        # Извлекаем данные о погоде
-        forecast = response.get("daily", {})
-        weather_info = []
+    # Запрашиваем координаты города
+    geo_url = f"https://geocoding-api.open-meteo.com/v1/search?name={city_name}&count=1&language=ru"
+    geo_response = requests.get(geo_url).json()
+    results = geo_response.get("results", [])
 
-        for i in range(3):  # Берем прогноз на 3 ближайших дня
-            weather_info.append({
-                "date": forecast.get("time", [""])[i],  # Дата прогноза
-                "temperature_max": forecast.get("temperature_2m_max", [None])[i],  # Максимальная температура
-                "temperature_min": forecast.get("temperature_2m_min", [None])[i],  # Минимальная температура
-                "wind_speed": round(forecast.get("wind_speed_10m_max", [None])[i] / 3.6, 1),  # Скорость ветра (перевод в м/с)
-                "precipitation": forecast.get("precipitation_sum", [None])[i],  # Осадки (мм)
-                "cloud_cover": forecast.get("cloudcover_mean", [None])[i],  # Средняя облачность (%)
-            })
+    if not results:
+        return JsonResponse({"error": "Город не найден"})
 
-        return JsonResponse({"city": request.GET.get("city", ""), "weather": weather_info})
+    latitude = results[0]["latitude"]
+    longitude = results[0]["longitude"]
 
-    return JsonResponse({"error": "Город не найден"})
+    # Запрашиваем прогноз погоды по координатам
+    weather_url = f"https://api.open-meteo.com/v1/forecast?latitude={latitude}&longitude={longitude}&daily=temperature_2m_max,temperature_2m_min,wind_speed_10m_max,precipitation_sum,cloudcover_mean&timezone=Europe/Moscow&language=ru"
+    weather_response = requests.get(weather_url).json()
+    forecast = weather_response.get("daily", {})
+
+    weather_info = [
+        {
+            "date": forecast.get("time", [""])[i],
+            "temperature_max": forecast.get("temperature_2m_max", [None])[i],
+            "temperature_min": forecast.get("temperature_2m_min", [None])[i],
+            "wind_speed": round(forecast.get("wind_speed_10m_max", [None])[i] / 3.6, 1),
+            "precipitation": forecast.get("precipitation_sum", [None])[i],
+            "cloud_cover": forecast.get("cloudcover_mean", [None])[i],
+        }
+        for i in range(3)  # Берем прогноз на 3 дня
+    ]
+
+    return JsonResponse({"city": city_name, "weather": weather_info})
