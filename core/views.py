@@ -143,9 +143,7 @@ def search_city(request):
     # Генерируем новый session_key, если его нет
     if not request.session.session_key:
         request.session.create()
-    session_key = request.session.session_key  # Получаем session_key
-
-    print(f"session_key: {session_key}")  # Отладка в логах
+    session_key = request.session.session_key
 
     city_name = request.GET.get("city_name", "").strip()
     if not city_name:
