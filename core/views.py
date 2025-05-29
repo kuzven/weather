@@ -22,18 +22,33 @@ def autocomplete_city(request):
     Возвращает:
     - JSON-ответ со списком городов, содержащим название, широту и долготу.
     """
-    query = request.GET.get("query", "")
-    if query:  # Если пользователь ввёл хотя бы один символ
+    query = request.GET.get("query", "").strip()
+    if query:
         url = f"https://geocoding-api.open-meteo.com/v1/search?name={query}&count=5&language=ru"
         response = requests.get(url).json()
 
-        # Формируем список городов для ответа
-        cities = [{"name": city["name"], "latitude": city["latitude"], "longitude": city["longitude"]}
-            for city in response.get("results", [])]
+        results = response.get("results", [])
+
+        if not results:
+            return JsonResponse({"cities": []})  # Если API ничего не вернул, отправляем пустой список
+
+        # Фильтруем уникальные названия городов через set
+        unique_cities = set()
+        cities = []
+
+        for city in results:
+            city_name = city["name"]
+            if city_name not in unique_cities:
+                unique_cities.add(city_name)  # Добавляем город в множество (убираем дубликаты)
+                cities.append({
+                    "name": city_name,
+                    "latitude": city["latitude"],
+                    "longitude": city["longitude"]
+                })
 
         return JsonResponse({"cities": cities})
 
-    return JsonResponse({"cities": []})  # Пустой список, если ничего не найдено
+    return JsonResponse({"cities": []})
 
 
 def get_weather(request):
