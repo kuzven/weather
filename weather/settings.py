@@ -136,8 +136,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-STATIC_ROOT = BASE_DIR / 'static'
-
 if os.getenv('USE_STATICFILES_DIRS') == 'True':
     STATICFILES_DIRS = [
         BASE_DIR / 'static'
