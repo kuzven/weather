@@ -145,6 +145,8 @@ def search_city(request):
         request.session.create()
     session_key = request.session.session_key  # Получаем session_key
 
+    print(f"session_key: {session_key}")  # Отладка в логах
+
     city_name = request.GET.get("city_name", "").strip()
     if not city_name:
         return JsonResponse({"error": "Название города не указано"})
