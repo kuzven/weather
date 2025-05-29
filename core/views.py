@@ -57,6 +57,7 @@ def get_weather(request):
     Получение прогноза погоды на 3 дня через Open-Meteo API.
     Запрашивает сначала координаты города через Geocoding API, а затем прогноз погоды.
     Сохраняет последний введённый город в сессии пользователя.
+    Записывает историю поиска и увеличивает счётчик запросов.
     """
     city_name = request.GET.get("city", "").strip()
 
@@ -94,6 +95,11 @@ def get_weather(request):
         for i in range(3)  # Берем прогноз на 3 дня
     ]
 
+    # Записываем историю поиска
+    city_entry, created = CitySearchHistory.objects.get_or_create(city_name=city_name)
+    city_entry.search_count += 1  # Увеличиваем количество запросов
+    city_entry.save()
+
     return JsonResponse({"city": city_name, "weather": weather_info})
 
 
@@ -103,3 +109,20 @@ def get_last_city(request):
     """
     last_city_name = request.session.get("last_city_name", None)
     return JsonResponse({"last_city_name": last_city_name})
+
+
+def get_search_history(request):
+    """
+    Возвращает список городов и количество их запросов.
+    """
+    history = CitySearchHistory.objects.all().values("city_name", "search_count")
+    return JsonResponse({"history": list(history)})
+
+
+def search_history(request):
+    """
+    Отображает историю поиска конкретного пользователя.
+    """
+    search_history = CitySearchHistory.objects.all().order_by("-search_count")  # Загружаем все города, сортируя по количеству запросов
+
+    return render(request, "core/search_history.html", {"search_history": search_history})

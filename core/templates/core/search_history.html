@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center">История поиска</h1>
+
+    {% if search_history %}
+        <ul class="list-group mt-3">
+            {% for city in search_history %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ city.city_name }}
+                    <span class="badge">{{ city.search_count }} запрос(ов)</span>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-center mt-3">История поиска пуста, вы пока не искали прогноз погоды по городам.</p>
+    {% endif %}
+</div>
+{% endblock %}

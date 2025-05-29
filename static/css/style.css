@@ -25,6 +25,14 @@ main {
     color: #f8f8f8 !important;
 }
 
+.navbar a {
+    transition: color 0.3s ease-in-out; /* Плавное изменение цвета */
+}
+
+.navbar a:hover {
+    color: #ffcc00 !important; /* Желтый цвет при наведении */
+}
+
 h1 { font-size: 1.5em; }
 h2 { font-size: 1.25em; }
 
@@ -108,4 +116,16 @@ h2 { font-size: 1.25em; }
 #showWeatherBtn:hover {
     background-color: #ffdb4d; /* Светло-желтый при наведении */
     border-color: #ffcc00;
+}
+
+.list-group-item {
+    background-color: #fffacd !important; /* Светло-жёлтый фон */
+    width: 80%; /* Ширина */
+    margin: 0 auto; /* Центрируем */
+    border-radius: 6px; /* Скругленные углы */
+    margin-bottom: 5px; /* Отступ между строками */
+}
+
+.badge {
+    color: black; /* Черный текст */
 }
