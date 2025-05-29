@@ -25,7 +25,8 @@ main {
     color: #f8f8f8 !important;
 }
 
-h1 { font-size: 1.25em; }
+h1 { font-size: 1.5em; }
+h2 { font-size: 1.25em; }
 
 #city-input {
     width: 50%; /* Уменьшение ширины */
@@ -63,6 +64,10 @@ h1 { font-size: 1.25em; }
     #suggestions {
         width: 80% !important; /* Как и #city-input */
     }
+}
+
+#weather-title {
+    display: none;
 }
 
 #weather-table {

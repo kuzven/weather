@@ -45,12 +45,16 @@ $(document).ready(function () {
             data: { city: cityName },
             success: function (data) {
                 let weatherTableBody = $("#weather-table-body");
+                let weatherTitle = $("#weather-title");
                 weatherTableBody.empty();  // Очищаем таблицу перед добавлением новых данных
 
                 if (data.error) {
                     alert(data.error);  // Выводим ошибку, если город не найден
                     return;
                 }
+
+                // Обновляем заголовок с названием города
+                weatherTitle.text(`Прогноз погоды в городе ${data.city} на 3 ближайших дня`).show();
 
                 // Добавляем прогноз погоды на 3 дня в таблицу
                 data.weather.forEach(day => {
