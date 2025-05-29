@@ -1,0 +1,41 @@
+services:
+  web:
+    build: .
+    container_name: weather-web
+    restart: always
+    depends_on:
+      - nginx
+    environment:
+      PG_DATABASE: ${PG_DATABASE}
+      PG_USER: ${PG_USER}
+      PG_PASSWORD: ${PG_PASSWORD}
+      DB_HOST: postgres
+    volumes:
+      - .:/app
+    networks:
+      - projects-network
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: weather-nginx
+    restart: always
+    ports:
+      - "8083:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./static:/static
+    networks:
+      - projects-network
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  projects-network:
+    name: projects-network
+    external: true
