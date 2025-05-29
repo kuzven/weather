@@ -17,8 +17,26 @@ $(document).ready(function () {
                     
                     // Добавляем города в список
                     data.cities.forEach(city => {
-                        suggestions.append(`<li class="list-group-item city-option">${city.name}</li>`);
-                    });
+                        let listItem = $(`<li class="list-group-item city-option">${city.name}</li>`);
+                        suggestions.append(listItem);
+                    
+                        // Добавляем обработчик клика (когда пользователь выбирает город)
+                        listItem.on("click", function () {
+                            let cityName = $(this).text();
+                            $("#city-input").val(cityName);
+                            suggestions.empty();  // Очищаем список после выбора
+                    
+                            // Сохраняем историю поиска для текущего устройства
+                            $.ajax({
+                                url: "/search_city/",
+                                type: "GET",
+                                data: { city_name: cityName },
+                                success: function (data) {
+                                    console.log("История поиска обновлена", data.history);
+                                }
+                            });
+                        });
+                    });                    
 
                     // При клике на подсказку выбираем город и загружаем прогноз
                     $(".city-option").on("click", function () {

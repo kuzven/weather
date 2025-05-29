@@ -121,8 +121,41 @@ def get_search_history(request):
 
 def search_history(request):
     """
-    Отображает историю поиска конкретного пользователя.
+    Отображает историю поиска только для текущего session_key.
     """
-    search_history = CitySearchHistory.objects.all().order_by("-search_count")  # Загружаем все города, сортируя по количеству запросов
+    # Получаем session_key текущего пользователя
+    session_key = request.session.session_key
+    if not session_key:
+        request.session.create()
+        session_key = request.session.session_key
+
+    # Фильтруем историю только для текущего session_key
+    search_history = CitySearchHistory.objects.filter(session_key=session_key).order_by("-search_count")
 
     return render(request, "core/search_history.html", {"search_history": search_history})
+
+
+def search_city(request):
+    """
+    Сохраняет историю поиска для каждого уникального устройства (по session_key).
+    Возвращает список запрашиваемых городов.
+    """
+    # Генерируем новый session_key, если его нет
+    if not request.session.session_key:
+        request.session.create()
+    session_key = request.session.session_key  # Получаем session_key
+
+    city_name = request.GET.get("city_name", "").strip()
+    if not city_name:
+        return JsonResponse({"error": "Название города не указано"})
+
+    # Записываем историю поиска для текущего session_key
+    city_entry, created = CitySearchHistory.objects.get_or_create(session_key=session_key, city_name=city_name)
+    if not created:
+        city_entry.search_count += 1
+        city_entry.save()
+
+    # Получаем историю поиска текущего устройства
+    history = CitySearchHistory.objects.filter(session_key=session_key).order_by("-search_count")
+
+    return JsonResponse({"history": list(history.values("city_name", "search_count"))})
