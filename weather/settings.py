@@ -150,3 +150,6 @@ else:
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
+SESSION_COOKIE_NAME = "weather_session"  # Уникальное имя cookie для сессий
+SESSION_COOKIE_AGE = 604800  # Срок жизни сессии (7 дней)
+SESSION_SAVE_EVERY_REQUEST = True  # Сессия сохраняется при каждом запросе
