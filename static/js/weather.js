@@ -32,10 +32,34 @@ $(document).ready(function () {
         }
     });
 
+    /**
+     * Функция преобразования формата даты
+     */
     function formatDate(isoDate) {
         let [year, month, day] = isoDate.split("-");
         return `${day}.${month}.${year}`;
     }
+
+    /**
+     * Запрашивает последний город для прогноза погоды
+     */
+    $.ajax({
+        url: "/get_last_city/",
+        type: "GET",
+        success: function (data) {
+            if (data.last_city_name) {
+                $("#lastCityText").text(`Последний раз вы смотрели погоду в городе ${data.last_city_name}. Показать погоду в ${data.last_city_name}?`);
+                $("#lastCityModal").modal("show");  // Показываем модальное окно
+
+                // Если пользователь нажал "Да" — загружаем погоду
+                $("#showWeatherBtn").click(function () {
+                    $("#city-input").val(data.last_city_name); // Заполняем поле ввода
+                    getWeather(data.last_city_name); // Запрашиваем прогноз
+                    $("#lastCityModal").modal("hide");  // Закрываем модальное окно
+                });
+            }
+        }
+    });
 
     /**
      * Запрашивает прогноз погоды для выбранного города через API Django /get_weather/.

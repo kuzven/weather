@@ -1,4 +1,5 @@
 import requests
+import json
 from django.shortcuts import render
 from django.http import JsonResponse
 from .models import CitySearchHistory
@@ -55,17 +56,15 @@ def get_weather(request):
     """
     Получение прогноза погоды на 3 дня через Open-Meteo API.
     Запрашивает сначала координаты города через Geocoding API, а затем прогноз погоды.
-
-    Аргументы:
-    - request: HTTP-запрос с параметром GET "city" (название города).
-
-    Возвращает:
-    - JSON-ответ с прогнозом температуры, ветра, осадков и облачности на 3 дня.
+    Сохраняет последний введённый город в сессии пользователя.
     """
     city_name = request.GET.get("city", "").strip()
 
     if not city_name:
         return JsonResponse({"error": "Название города не указано"})
+
+    # Запоминаем последний введённый город в сессии пользователя
+    request.session["last_city_name"] = city_name
 
     # Запрашиваем координаты города
     geo_url = f"https://geocoding-api.open-meteo.com/v1/search?name={city_name}&count=1&language=ru"
@@ -96,3 +95,11 @@ def get_weather(request):
     ]
 
     return JsonResponse({"city": city_name, "weather": weather_info})
+
+
+def get_last_city(request):
+    """
+    Получение последнего введённого города из сессии пользователя.
+    """
+    last_city_name = request.session.get("last_city_name", None)
+    return JsonResponse({"last_city_name": last_city_name})

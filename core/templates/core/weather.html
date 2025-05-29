@@ -32,5 +32,25 @@
 
     <!-- Контейнер для мобильных экранов (≤767px) -->
     <div id="weather-cards" class="d-none"></div>
+
+    <!-- Модальное окно для выбора города -->
+    <div class="modal fade" id="lastCityModal" tabindex="-1" aria-labelledby="lastCityModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="lastCityModalLabel">Последний просмотр погоды</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="lastCityText"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="showWeatherBtn">Да</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 {% endblock %}

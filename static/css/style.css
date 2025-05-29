@@ -98,3 +98,14 @@ h2 { font-size: 1.25em; }
     font-size: 1.2em;
     margin-bottom: 10px;
 }
+
+#showWeatherBtn {
+    background-color: #ffcc00; /* Желтый цвет */
+    border-color: #ffb700; /* Чуть темнее для акцента */
+    color: black; /* Черный текст */
+}
+
+#showWeatherBtn:hover {
+    background-color: #ffdb4d; /* Светло-желтый при наведении */
+    border-color: #ffcc00;
+}
