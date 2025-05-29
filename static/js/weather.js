@@ -49,9 +49,11 @@ $(document).ready(function () {
             type: "GET",
             data: { city: cityName },
             success: function (data) {
-                let weatherTableBody = $("#weather-table-body");
                 let weatherTitle = $("#weather-title");
+                let weatherTableBody = $("#weather-table-body");
+                let weatherCards = $("#weather-cards");
                 weatherTableBody.empty();  // Очищаем таблицу перед добавлением новых данных
+                weatherCards.empty(); // Очищаем карточки перед добавлением новых данных
 
                 if (data.error) {
                     alert(data.error);  // Выводим ошибку, если город не найден
@@ -63,11 +65,14 @@ $(document).ready(function () {
                 // Обновляем заголовок с названием города
                 weatherTitle.text(`Прогноз погоды в городе ${data.city} на 3 ближайших дня`).show();
 
-                // Добавляем прогноз погоды на 3 дня в таблицу
+                // Добавляем прогноз погоды на 3 дня
                 data.weather.forEach(day => {
+                    let formattedDate = formatDate(day.date);
+
+                    // Заполняем таблицу (если экран >767px)
                     weatherTableBody.append(`
                         <tr>
-                            <td>${formatDate(day.date)}</td>
+                            <td>${formattedDate}</td>
                             <td>${day.temperature_min}°C</td>
                             <td>${day.temperature_max}°C</td>
                             <td>${day.wind_speed} м/с</td>
@@ -75,9 +80,29 @@ $(document).ready(function () {
                             <td>${day.cloud_cover}%</td>
                         </tr>
                     `);
+
+                    // Создаём карточку (если экран ≤767px)
+                    let card = `
+                        <div class="weather-card p-3 mb-2">
+                            <h4>${formattedDate}</h4>
+                            <p>🌡️ Мин t: ${day.temperature_min}°C</p>
+                            <p>🔥 Макс t: ${day.temperature_max}°C</p>
+                            <p>💨 Ветер: ${day.wind_speed} м/с</p>
+                            <p>🌧️ Осадки: ${day.precipitation} мм</p>
+                            <p>☁️ Облачность: ${day.cloud_cover}%</p>
+                        </div>
+                    `;
+                    weatherCards.append(card);
                 });
 
-                $("#weather-table").show();  // Показываем таблицу, если данные получены
+                // Показываем нужный блок в зависимости от размера экрана
+                if ($(window).width() <= 767) { 
+                    weatherCards.removeClass("d-none").addClass("d-block"); // Убираем d-none
+                    $("#weather-table").hide();
+                } else {
+                    weatherCards.addClass("d-none").removeClass("d-block"); // Возвращаем d-none
+                    $("#weather-table").show();
+                }                
             }
         });
     }
