@@ -32,6 +32,11 @@ $(document).ready(function () {
         }
     });
 
+    function formatDate(isoDate) {
+        let [year, month, day] = isoDate.split("-");
+        return `${day}.${month}.${year}`;
+    }
+
     /**
      * Запрашивает прогноз погоды для выбранного города через API Django /get_weather/.
      * Динамически обновляет таблицу с прогнозом на 3 дня.
@@ -50,6 +55,8 @@ $(document).ready(function () {
 
                 if (data.error) {
                     alert(data.error);  // Выводим ошибку, если город не найден
+                    weatherTitle.hide();
+                    $("#weather-table").hide();
                     return;
                 }
 
@@ -60,7 +67,7 @@ $(document).ready(function () {
                 data.weather.forEach(day => {
                     weatherTableBody.append(`
                         <tr>
-                            <td>${day.date}</td>
+                            <td>${formatDate(day.date)}</td>
                             <td>${day.temperature_min}°C</td>
                             <td>${day.temperature_max}°C</td>
                             <td>${day.wind_speed} м/с</td>
