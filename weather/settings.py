@@ -30,6 +30,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 DEBUG = ast.literal_eval(os.getenv('DEBUG'))
 
 ALLOWED_HOSTS = ast.literal_eval(os.getenv('ALLOWED_HOSTS'))
+CSRF_TRUSTED_ORIGINS = ast.literal_eval(os.getenv('CSRF_TRUSTED_ORIGINS'))
 
 MY_DOMAIN = os.getenv('MY_DOMAIN')
 
