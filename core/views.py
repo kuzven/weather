@@ -96,9 +96,13 @@ def get_weather(request):
     ]
 
     # Записываем историю поиска
-    city_entry, created = CitySearchHistory.objects.get_or_create(city_name=city_name)
-    city_entry.search_count += 1  # Увеличиваем количество запросов
-    city_entry.save()
+    city_entry = CitySearchHistory.objects.filter(session_key=request.session.session_key, city_name=city_name).first()
+    
+    if city_entry:
+        city_entry.search_count += 1  # Увеличиваем счётчик, если запись уже есть
+        city_entry.save()
+    else:
+        city_entry = CitySearchHistory.objects.create(session_key=request.session.session_key, city_name=city_name, search_count=1)
 
     return JsonResponse({"city": city_name, "weather": weather_info})
 
@@ -148,6 +152,9 @@ def search_city(request):
     city_name = request.GET.get("city_name", "").strip()
     if not city_name:
         return JsonResponse({"error": "Название города не указано"})
+    
+    # Добавляем отладочный print() перед сохранением
+    print(f"Запрашиваем город: {city_name}, session_key: {session_key}")
 
     # Проверяем, существует ли запись с этим session_key
     city_entry = CitySearchHistory.objects.filter(session_key=session_key, city_name=city_name).first()
