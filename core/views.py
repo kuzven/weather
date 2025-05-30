@@ -149,11 +149,13 @@ def search_city(request):
     if not city_name:
         return JsonResponse({"error": "Название города не указано"})
 
-    # Записываем историю поиска для текущего session_key
-    city_entry, created = CitySearchHistory.objects.get_or_create(session_key=session_key, city_name=city_name)
-    if not created:
-        city_entry.search_count += 1
+    # Проверяем, существует ли запись с этим session_key
+    city_entry = CitySearchHistory.objects.filter(session_key=session_key, city_name=city_name).first()
+    if city_entry:
+        city_entry.search_count += 1  # Увеличиваем, если запись уже есть
         city_entry.save()
+    else:
+        CitySearchHistory.objects.create(session_key=session_key, city_name=city_name, search_count=1)  # Создаём новую запись
 
     # Получаем историю поиска текущего устройства
     history = CitySearchHistory.objects.filter(session_key=session_key).order_by("-search_count")
