@@ -96,13 +96,17 @@ def get_weather(request):
     ]
 
     # Записываем историю поиска
-    city_entry = CitySearchHistory.objects.filter(session_key=request.session.session_key, city_name=city_name).first()
-    
+    session_key = request.session.session_key
+    if not session_key:
+        request.session.create()
+        session_key = request.session.session_key
+
+    city_entry = CitySearchHistory.objects.filter(session_key=session_key, city_name=city_name).first()
     if city_entry:
-        city_entry.search_count += 1  # Увеличиваем счётчик, если запись уже есть
+        city_entry.search_count += 1
         city_entry.save()
     else:
-        city_entry = CitySearchHistory.objects.create(session_key=request.session.session_key, city_name=city_name, search_count=1)
+        city_entry = CitySearchHistory.objects.create(session_key=session_key, city_name=city_name, search_count=1)
 
     return JsonResponse({"city": city_name, "weather": weather_info})
 
@@ -134,9 +138,9 @@ def search_history(request):
         session_key = request.session.session_key
 
     # Фильтруем историю только для текущего session_key
-    search_history = CitySearchHistory.objects.filter(session_key=session_key).order_by("-search_count")
+    user_search_history = CitySearchHistory.objects.filter(session_key=session_key).order_by("-search_count")
 
-    return render(request, "core/search_history.html", {"search_history": search_history})
+    return render(request, "core/search_history.html", {"search_history": user_search_history})
 
 
 def search_city(request):
@@ -152,17 +156,6 @@ def search_city(request):
     city_name = request.GET.get("city_name", "").strip()
     if not city_name:
         return JsonResponse({"error": "Название города не указано"})
-    
-    # Добавляем отладочный print() перед сохранением
-    print(f"Запрашиваем город: {city_name}, session_key: {session_key}")
-
-    # Проверяем, существует ли запись с этим session_key
-    city_entry = CitySearchHistory.objects.filter(session_key=session_key, city_name=city_name).first()
-    if city_entry:
-        city_entry.search_count += 1  # Увеличиваем, если запись уже есть
-        city_entry.save()
-    else:
-        CitySearchHistory.objects.create(session_key=session_key, city_name=city_name, search_count=1)  # Создаём новую запись
 
     # Получаем историю поиска текущего устройства
     history = CitySearchHistory.objects.filter(session_key=session_key).order_by("-search_count")

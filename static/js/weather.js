@@ -24,27 +24,10 @@ $(document).ready(function () {
                         listItem.on("click", function () {
                             let cityName = $(this).text();
                             $("#city-input").val(cityName);
-                            suggestions.empty();  // Очищаем список после выбора
-                    
-                            // Сохраняем историю поиска для текущего устройства
-                            $.ajax({
-                                url: "/search_city/",
-                                type: "GET",
-                                data: { city_name: cityName },
-                                success: function (data) {
-                                    console.log("История поиска обновлена", data.history);
-                                }
-                            });
-                        });
+                            suggestions.empty();  
+                            getWeather(cityName);
+                        });                        
                     });                    
-
-                    // При клике на подсказку выбираем город и загружаем прогноз
-                    $(".city-option").on("click", function () {
-                        let cityName = $(this).text();
-                        $("#city-input").val(cityName);
-                        suggestions.empty();  // Очищаем список после выбора
-                        getWeather(cityName);  // Запрос прогноза погоды
-                    });
                 }
             });
         }
